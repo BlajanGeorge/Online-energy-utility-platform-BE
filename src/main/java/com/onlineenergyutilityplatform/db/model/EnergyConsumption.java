@@ -25,7 +25,6 @@ public class EnergyConsumption {
     private Float energy;
     @Column(name = "time")
     private Timestamp time;
-    @Column
     @ManyToOne
     @JoinColumn(name = "device_id")
     private Device device;

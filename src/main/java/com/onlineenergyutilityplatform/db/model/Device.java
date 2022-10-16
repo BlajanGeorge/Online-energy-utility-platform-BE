@@ -27,7 +27,6 @@ public class Device {
     //expressed in kWh
     @Column(name = "max_hourly_energy_consumption")
     private Float maxHourlyEnergyConsumption;
-    @Column
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;

@@ -99,9 +99,9 @@ public class UserController {
         return ok(result);
     }
 
-    @PutMapping(USER_BY_ID)
+    @PutMapping(DEVICE_TO_USER)
     public ResponseEntity<Void> assignDeviceToUser(@Min(1) @PathVariable("id") int id,
-                                                   @Min(1) @RequestHeader("X-Device-Id") Integer deviceId) {
+                                                   @Min(1) @PathVariable("deviceId") int deviceId) {
         log.info("Assign device on user request received for user id {} and device id {}.", id, deviceId);
 
         userService.assignDeviceToUser(id, deviceId);
