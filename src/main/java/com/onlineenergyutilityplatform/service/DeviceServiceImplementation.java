@@ -2,10 +2,7 @@ package com.onlineenergyutilityplatform.service;
 
 import com.onlineenergyutilityplatform.db.model.Device;
 import com.onlineenergyutilityplatform.db.repositories.DeviceRepository;
-import com.onlineenergyutilityplatform.dto.DeviceDto;
-import com.onlineenergyutilityplatform.dto.GetDeviceDto;
-import com.onlineenergyutilityplatform.dto.PageInfo;
-import com.onlineenergyutilityplatform.dto.PagedResult;
+import com.onlineenergyutilityplatform.dto.*;
 import com.onlineenergyutilityplatform.mappers.Mapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -94,5 +91,15 @@ public class DeviceServiceImplementation implements DeviceService {
         Optional<Device> deviceOptional = deviceRepository.findById(deviceId);
         Device device = deviceOptional.orElseThrow(() -> new EntityNotFoundException(String.format(DEVICE_WITH_ID_NOT_FOUND, deviceId)));
         deviceRepository.delete(device);
+    }
+
+    @Override
+    public GetDeviceDto addEnergyConsumptionReport(EnergyConsumptionDto energyConsumptionDto, int deviceId) {
+        Optional<Device> deviceOptional = deviceRepository.findById(deviceId);
+        Device device = deviceOptional.orElseThrow(() -> new EntityNotFoundException(String.format(DEVICE_WITH_ID_NOT_FOUND, deviceId)));
+
+        device.getEnergyConsumptionList().add(mapFromDtoToEntity(energyConsumptionDto));
+
+        return mapFromEntityToDto(deviceRepository.save(device));
     }
 }

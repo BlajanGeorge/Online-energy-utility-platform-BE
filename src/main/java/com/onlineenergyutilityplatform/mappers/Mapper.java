@@ -1,12 +1,10 @@
 package com.onlineenergyutilityplatform.mappers;
 
 import com.onlineenergyutilityplatform.db.model.Device;
+import com.onlineenergyutilityplatform.db.model.EnergyConsumption;
 import com.onlineenergyutilityplatform.db.model.Role;
 import com.onlineenergyutilityplatform.db.model.User;
-import com.onlineenergyutilityplatform.dto.DeviceDto;
-import com.onlineenergyutilityplatform.dto.CreateUserDto;
-import com.onlineenergyutilityplatform.dto.GetDeviceDto;
-import com.onlineenergyutilityplatform.dto.GetUserDto;
+import com.onlineenergyutilityplatform.dto.*;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -65,8 +63,7 @@ public class Mapper {
 
         return new Device(deviceDto.getDescription(),
                 deviceDto.getAddress(),
-                deviceDto.getMaxHourlyEnergyConsumption(),
-                null);
+                deviceDto.getMaxHourlyEnergyConsumption());
     }
 
     public static GetDeviceDto mapFromEntityToDto(final Device device) {
@@ -76,6 +73,22 @@ public class Mapper {
 
         User user = device.getUser();
 
-        return new GetDeviceDto(device.getId(), device.getDescription(), device.getAddress(), device.getMaxHourlyEnergyConsumption(), user == null ? null : user.getId());
+        return new GetDeviceDto(device.getId(), device.getDescription(), device.getAddress(), device.getMaxHourlyEnergyConsumption(), user == null ? null : user.getId(), device.getEnergyConsumptionList().stream().map(Mapper::mapFromEntityToDto).collect(Collectors.toList()));
+    }
+
+    public static EnergyConsumptionDto mapFromEntityToDto(final EnergyConsumption energyConsumption) {
+        if (energyConsumption == null) {
+            return null;
+        }
+
+        return new EnergyConsumptionDto(energyConsumption.getEnergy(), energyConsumption.getTime());
+    }
+
+    public static EnergyConsumption mapFromDtoToEntity(final EnergyConsumptionDto energyConsumptionDto) {
+        if (energyConsumptionDto == null) {
+            return null;
+        }
+
+        return new EnergyConsumption(energyConsumptionDto.getEnergy(), energyConsumptionDto.getTime());
     }
 }

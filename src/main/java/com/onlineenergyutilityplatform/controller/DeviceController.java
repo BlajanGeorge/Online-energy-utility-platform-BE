@@ -2,6 +2,7 @@ package com.onlineenergyutilityplatform.controller;
 
 
 import com.onlineenergyutilityplatform.dto.DeviceDto;
+import com.onlineenergyutilityplatform.dto.EnergyConsumptionDto;
 import com.onlineenergyutilityplatform.dto.GetDeviceDto;
 import com.onlineenergyutilityplatform.dto.PagedResult;
 import com.onlineenergyutilityplatform.service.DeviceService;
@@ -83,6 +84,17 @@ public class DeviceController {
         log.info("Create device request received with load {}", deviceDto);
 
         GetDeviceDto result = deviceService.createDevice(deviceDto);
+        log.info("Returned device {}", result);
+
+        return ok(result);
+    }
+
+    @PostMapping(DEVICE_BY_ID)
+    public ResponseEntity<GetDeviceDto> addEnergyConsumptionReport(@Min(1) @PathVariable("id") int id,
+                                                                   @Valid @RequestBody EnergyConsumptionDto energyConsumptionDto) {
+        log.info("Add energy consumption report request received with load {} for device with id {}", energyConsumptionDto, id);
+
+        GetDeviceDto result = deviceService.addEnergyConsumptionReport(energyConsumptionDto, id);
         log.info("Returned device {}", result);
 
         return ok(result);

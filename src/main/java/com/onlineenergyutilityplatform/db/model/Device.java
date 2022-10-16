@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Class to define Device db entity
@@ -29,11 +31,14 @@ public class Device {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+    @Column
+    @OneToMany(mappedBy = "device", fetch = FetchType.LAZY)
+    private List<EnergyConsumption> energyConsumptionList;
 
-    public Device(String description, String address, Float maxHourlyEnergyConsumption, User user) {
+    public Device(String description, String address, Float maxHourlyEnergyConsumption) {
         this.description = description;
         this.address = address;
         this.maxHourlyEnergyConsumption = maxHourlyEnergyConsumption;
-        this.user = user;
+        this.energyConsumptionList = new ArrayList<>();
     }
 }

@@ -46,4 +46,6 @@ public interface DeviceService {
      * @param deviceId user identifier
      */
     void deleteDeviceById(int deviceId);
+
+    GetDeviceDto addEnergyConsumptionReport(EnergyConsumptionDto energyConsumptionDto, int deviceId);
 }
