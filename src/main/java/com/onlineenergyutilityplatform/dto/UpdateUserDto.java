@@ -2,6 +2,7 @@ package com.onlineenergyutilityplatform.dto;
 
 import com.onlineenergyutilityplatform.db.model.Role;
 import com.onlineenergyutilityplatform.utilities.PasswordConstraint;
+import com.onlineenergyutilityplatform.utilities.UsernameConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,6 +24,7 @@ public class UpdateUserDto {
     @Length(max = 100)
     private String name;
     private Role role;
+    @UsernameConstraint
     private String username;
     @PasswordConstraint
     private String password;
