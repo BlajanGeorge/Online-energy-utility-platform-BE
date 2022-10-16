@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,11 +34,11 @@ public class User {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Device> deviceList;
 
-    public User(String name, Role role, String username, String password, List<Device> deviceList) {
+    public User(String name, Role role, String username, String password) {
         this.name = name;
         this.role = role;
         this.username = username;
         this.password = password;
-        this.deviceList = deviceList;
+        this.deviceList = new ArrayList<>();
     }
 }

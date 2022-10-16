@@ -31,7 +31,7 @@ public class Device {
     @JoinColumn(name = "user_id")
     private User user;
     @Column
-    @OneToMany(mappedBy = "device", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "device", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<EnergyConsumption> energyConsumptionList;
 
     public Device(String description, String address, Float maxHourlyEnergyConsumption) {

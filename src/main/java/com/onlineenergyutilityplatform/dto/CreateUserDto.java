@@ -1,5 +1,6 @@
 package com.onlineenergyutilityplatform.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.onlineenergyutilityplatform.utilities.PasswordConstraint;
 import com.onlineenergyutilityplatform.utilities.UsernameConstraint;
 import lombok.*;
@@ -28,5 +29,6 @@ public class CreateUserDto {
     @PasswordConstraint
     private String password;
     @NotNull
+    @JsonProperty("devices")
     private List<DeviceDto> deviceDtoList;
 }

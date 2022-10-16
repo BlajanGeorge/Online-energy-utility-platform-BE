@@ -1,5 +1,6 @@
 package com.onlineenergyutilityplatform.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.onlineenergyutilityplatform.db.model.Role;
 import lombok.*;
 
@@ -20,6 +21,7 @@ public class GetUserDto {
     private Role role;
     private String username;
     private String password;
+    @JsonProperty("devices")
     private List<GetDeviceDto> deviceDtoList;
 
 }

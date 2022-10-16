@@ -12,6 +12,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.persistence.EntityNotFoundException;
+import java.sql.SQLIntegrityConstraintViolationException;
 
 /**
  * Global exceptions handler
@@ -35,6 +36,14 @@ public class ExceptionsHandler extends ResponseEntityExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse(new ErrorInformation(ex.getMessage(), ex.getClass().getCanonicalName()));
 
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
+    public ResponseEntity<ErrorResponse> handleSqlException(final SQLIntegrityConstraintViolationException ex) {
+        return new ResponseEntity<>(new ErrorResponse(
+                new ErrorInformation(
+                        ex.getMessage(),
+                        ex.getClass().getCanonicalName())), HttpStatus.BAD_REQUEST);
     }
 
 }

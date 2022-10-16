@@ -31,9 +31,7 @@ public class Mapper {
         return new User(createUserDto.getName(),
                 role,
                 createUserDto.getUsername(),
-                createUserDto.getPassword(),
-                createUserDto.getDeviceDtoList().stream().map(Mapper::mapFromDtoToEntity).collect(Collectors.toList())
-        );
+                createUserDto.getPassword());
     }
 
     /**

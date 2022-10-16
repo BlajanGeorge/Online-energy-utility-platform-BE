@@ -1,13 +1,16 @@
 package com.onlineenergyutilityplatform.service;
 
 import com.onlineenergyutilityplatform.db.model.Device;
+import com.onlineenergyutilityplatform.db.model.EnergyConsumption;
 import com.onlineenergyutilityplatform.db.repositories.DeviceRepository;
+import com.onlineenergyutilityplatform.db.repositories.EnergyConsumptionRepository;
 import com.onlineenergyutilityplatform.dto.*;
 import com.onlineenergyutilityplatform.mappers.Mapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
@@ -22,9 +25,12 @@ import static com.onlineenergyutilityplatform.utilities.Constants.DEVICE_WITH_ID
 @Slf4j
 public class DeviceServiceImplementation implements DeviceService {
     private final DeviceRepository deviceRepository;
+    private final EnergyConsumptionRepository energyConsumptionRepository;
 
-    public DeviceServiceImplementation(final DeviceRepository deviceRepository) {
+    public DeviceServiceImplementation(final DeviceRepository deviceRepository,
+                                       final EnergyConsumptionRepository energyConsumptionRepository) {
         this.deviceRepository = deviceRepository;
+        this.energyConsumptionRepository = energyConsumptionRepository;
     }
 
     /**
@@ -62,6 +68,7 @@ public class DeviceServiceImplementation implements DeviceService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public GetDeviceDto updateDeviceById(DeviceDto deviceDto, int deviceId) {
         Optional<Device> deviceOptional = deviceRepository.findById(deviceId);
         Device device = deviceOptional.orElseThrow(() -> new EntityNotFoundException(String.format(DEVICE_WITH_ID_NOT_FOUND, deviceId)));
@@ -77,6 +84,7 @@ public class DeviceServiceImplementation implements DeviceService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public GetDeviceDto createDevice(DeviceDto deviceDto) {
         Device device = mapFromDtoToEntity(deviceDto);
         return mapFromEntityToDto(deviceRepository.save(device));
@@ -87,6 +95,7 @@ public class DeviceServiceImplementation implements DeviceService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public void deleteDeviceById(int deviceId) {
         Optional<Device> deviceOptional = deviceRepository.findById(deviceId);
         Device device = deviceOptional.orElseThrow(() -> new EntityNotFoundException(String.format(DEVICE_WITH_ID_NOT_FOUND, deviceId)));
@@ -94,12 +103,15 @@ public class DeviceServiceImplementation implements DeviceService {
     }
 
     @Override
+    @Transactional
     public GetDeviceDto addEnergyConsumptionReport(EnergyConsumptionDto energyConsumptionDto, int deviceId) {
         Optional<Device> deviceOptional = deviceRepository.findById(deviceId);
         Device device = deviceOptional.orElseThrow(() -> new EntityNotFoundException(String.format(DEVICE_WITH_ID_NOT_FOUND, deviceId)));
 
-        device.getEnergyConsumptionList().add(mapFromDtoToEntity(energyConsumptionDto));
+        EnergyConsumption energyConsumption = mapFromDtoToEntity(energyConsumptionDto);
+        energyConsumption.setDevice(device);
+        energyConsumptionRepository.save(energyConsumption);
 
-        return mapFromEntityToDto(deviceRepository.save(device));
+        return mapFromEntityToDto(device);
     }
 }

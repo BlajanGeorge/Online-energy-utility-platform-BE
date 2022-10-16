@@ -1,6 +1,7 @@
 package com.onlineenergyutilityplatform.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import java.util.List;
@@ -19,5 +20,6 @@ public class GetDeviceDto {
     private String address;
     private Float maxHourlyEnergyConsumption;
     private Integer userId;
+    @JsonProperty("energyConsumption")
     private List<EnergyConsumptionDto> energyConsumptionDtoList;
 }

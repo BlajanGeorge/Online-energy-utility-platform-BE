@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
@@ -78,6 +79,7 @@ public class UserServiceImplementation implements UserService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public GetUserDto updateUserById(UpdateUserDto updateUserDto, int userId) {
         Optional<User> userOptional = userRepository.findById(userId);
         User user = userOptional.orElseThrow(() -> new EntityNotFoundException(String.format(USER_NOT_FOUND, userId)));
@@ -94,8 +96,19 @@ public class UserServiceImplementation implements UserService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public GetUserDto createUser(CreateUserDto createUserDto, Role role) {
         User user = mapFromDtoToEntity(createUserDto, role);
+
+        List<Device> devices = createUserDto.getDeviceDtoList().stream()
+                .map(Mapper::mapFromDtoToEntity)
+                .collect(Collectors.toList());
+
+        for (Device device : devices) {
+            device.setUser(user);
+            deviceRepository.save(device);
+        }
+
         return mapFromEntityToDto(userRepository.save(user));
     }
 
@@ -103,9 +116,17 @@ public class UserServiceImplementation implements UserService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public void deleteUserById(int userId) {
         Optional<User> userOptional = userRepository.findById(userId);
         User user = userOptional.orElseThrow(() -> new EntityNotFoundException(String.format(USER_NOT_FOUND, userId)));
+
+        List<Device> devices = user.getDeviceList();
+
+        for (Device device : devices) {
+            device.setUser(null);
+        }
+
         userRepository.delete(user);
     }
 
@@ -113,14 +134,14 @@ public class UserServiceImplementation implements UserService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public void assignDeviceToUser(int userId, int deviceId) {
         Optional<User> userOptional = userRepository.findById(userId);
         User user = userOptional.orElseThrow(() -> new EntityNotFoundException(String.format(USER_NOT_FOUND, userId)));
         Optional<Device> deviceOptional = deviceRepository.findById(deviceId);
         Device device = deviceOptional.orElseThrow(() -> new EntityNotFoundException(String.format(DEVICE_WITH_ID_NOT_FOUND, deviceId)));
 
-        user.getDeviceList().add(device);
-
-        userRepository.save(user);
+        device.setUser(user);
+        deviceRepository.save(device);
     }
 }
