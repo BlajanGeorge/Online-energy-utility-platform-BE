@@ -1,10 +1,7 @@
 package com.onlineenergyutilityplatform.controller;
 
 import com.onlineenergyutilityplatform.db.model.Role;
-import com.onlineenergyutilityplatform.dto.CreateUserDto;
-import com.onlineenergyutilityplatform.dto.GetUserDto;
-import com.onlineenergyutilityplatform.dto.PagedResult;
-import com.onlineenergyutilityplatform.dto.UpdateUserDto;
+import com.onlineenergyutilityplatform.dto.*;
 import com.onlineenergyutilityplatform.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -77,6 +74,15 @@ public class UserController {
         userService.deleteUserById(id);
 
         return ok().build();
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<UserLoginResponse> login(@RequestBody UserLoginRequest userLoginRequest) {
+        log.info("Login request received for data {}.", userLoginRequest);
+
+        UserLoginResponse userLoginResponse = userService.login(userLoginRequest);
+
+        return ok(userLoginResponse);
     }
 
     @PostMapping(USERS_CREATE_CLIENT)

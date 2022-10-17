@@ -5,6 +5,7 @@ import com.onlineenergyutilityplatform.dto.ErrorResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -36,6 +37,13 @@ public class ExceptionsHandler extends ResponseEntityExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse(new ErrorInformation(ex.getMessage(), ex.getClass().getCanonicalName()));
 
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    protected ResponseEntity<Object> handleBadCredentialsException(BadCredentialsException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(new ErrorInformation(ex.getMessage(), ex.getClass().getCanonicalName()));
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(SQLIntegrityConstraintViolationException.class)

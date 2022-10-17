@@ -7,9 +7,12 @@ import com.onlineenergyutilityplatform.db.repositories.DeviceRepository;
 import com.onlineenergyutilityplatform.db.repositories.UserRepository;
 import com.onlineenergyutilityplatform.dto.*;
 import com.onlineenergyutilityplatform.mappers.Mapper;
+import com.onlineenergyutilityplatform.security.TokenService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,11 +40,17 @@ public class UserServiceImplementation implements UserService {
      * Repository to provide access to db
      */
     private final DeviceRepository deviceRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final TokenService tokenService;
 
     public UserServiceImplementation(final UserRepository userRepository,
-                                     final DeviceRepository deviceRepository) {
+                                     final DeviceRepository deviceRepository,
+                                     final BCryptPasswordEncoder bCryptPasswordEncoder,
+                                     final TokenService tokenService) {
         this.userRepository = userRepository;
         this.deviceRepository = deviceRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.tokenService = tokenService;
     }
 
     /**
@@ -85,7 +94,7 @@ public class UserServiceImplementation implements UserService {
         User user = userOptional.orElseThrow(() -> new EntityNotFoundException(String.format(USER_NOT_FOUND, userId)));
 
         user.setUsername(updateUserDto.getUsername());
-        user.setPassword(updateUserDto.getPassword());
+        user.setPassword(bCryptPasswordEncoder.encode(updateUserDto.getPassword()));
         user.setRole(updateUserDto.getRole());
         user.setName(updateUserDto.getName());
 
@@ -99,6 +108,7 @@ public class UserServiceImplementation implements UserService {
     @Transactional
     public GetUserDto createUser(CreateUserDto createUserDto, Role role) {
         User user = mapFromDtoToEntity(createUserDto, role);
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
 
         List<Device> devices = createUserDto.getDeviceDtoList().stream()
                 .map(Mapper::mapFromDtoToEntity)
@@ -143,5 +153,20 @@ public class UserServiceImplementation implements UserService {
 
         device.setUser(user);
         deviceRepository.save(device);
+    }
+
+    @Override
+    public UserLoginResponse login(UserLoginRequest userLoginRequest) {
+        Optional<User> userOptional = this.userRepository.findByUsername(userLoginRequest.getUsername());
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            if (bCryptPasswordEncoder.matches(userLoginRequest.getPassword(), user.getPassword())) {
+                return Mapper.mapFromModelToUserLoginResponse(user, tokenService.getJWTToken(user.getUsername(), user.getRole()));
+            } else {
+                throw new BadCredentialsException("Incorrect email/password!");
+            }
+        } else {
+            throw new BadCredentialsException("Incorrect email/password!");
+        }
     }
 }

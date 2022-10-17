@@ -21,4 +21,5 @@ public class Constants {
     public static final String DEVICE_BY_ID = DEVICES + "/{" + DEVICE_ID_PARAM + "}";
     public static final String PAGE_INDEX_QUERY_PARAM_NAME = "page";
     public static final String PAGE_SIZE_QUERY_PARAM_NAME = "size";
+    public static final String SECRET = "secret";
 }

@@ -89,4 +89,8 @@ public class Mapper {
 
         return new EnergyConsumption(energyConsumptionDto.getEnergy(), energyConsumptionDto.getTime());
     }
+
+    public static UserLoginResponse mapFromModelToUserLoginResponse(User user, String token) {
+        return new UserLoginResponse(user.getId(), token, user.getRole().name().equals("ADMINISTRATOR"));
+    }
 }

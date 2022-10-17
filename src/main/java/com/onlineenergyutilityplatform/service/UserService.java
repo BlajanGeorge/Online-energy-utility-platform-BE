@@ -1,10 +1,7 @@
 package com.onlineenergyutilityplatform.service;
 
 import com.onlineenergyutilityplatform.db.model.Role;
-import com.onlineenergyutilityplatform.dto.CreateUserDto;
-import com.onlineenergyutilityplatform.dto.GetUserDto;
-import com.onlineenergyutilityplatform.dto.PagedResult;
-import com.onlineenergyutilityplatform.dto.UpdateUserDto;
+import com.onlineenergyutilityplatform.dto.*;
 import org.springframework.data.domain.PageRequest;
 
 /**
@@ -55,4 +52,6 @@ public interface UserService {
      * @param deviceId device identifier
      */
     void assignDeviceToUser(int userId, int deviceId);
+
+    UserLoginResponse login(UserLoginRequest userLoginRequest);
 }
