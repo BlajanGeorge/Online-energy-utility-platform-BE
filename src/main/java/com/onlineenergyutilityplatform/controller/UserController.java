@@ -1,7 +1,12 @@
 package com.onlineenergyutilityplatform.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onlineenergyutilityplatform.db.model.Role;
+import com.onlineenergyutilityplatform.db.model.User;
+import com.onlineenergyutilityplatform.db.repositories.UserRepository;
 import com.onlineenergyutilityplatform.dto.*;
+import com.onlineenergyutilityplatform.exceptions.ForbiddenAccess;
 import com.onlineenergyutilityplatform.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -9,8 +14,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import java.util.*;
 
 import static com.onlineenergyutilityplatform.utilities.Constants.*;
 import static org.springframework.http.ResponseEntity.ok;
@@ -27,9 +34,12 @@ public class UserController {
      * Service to handle user operations
      */
     private final UserService userService;
+    private final UserRepository userRepository;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService,
+                          UserRepository userRepository) {
         this.userService = userService;
+        this.userRepository = userRepository;
     }
 
     @GetMapping(USERS)
@@ -47,13 +57,33 @@ public class UserController {
     }
 
     @GetMapping(USER_BY_ID)
-    public ResponseEntity<GetUserDto> getUserById(@Min(1) @PathVariable("id") int id) {
+    public ResponseEntity<GetUserDto> getUserById(@Min(1) @PathVariable("id") int id,
+                                                  @RequestHeader("authorization") String authorization) throws JsonProcessingException {
+        check(authorization, id);
         log.info("Get user by id request received for id {}", id);
 
         GetUserDto result = userService.getUserById(id);
         log.info("Returned user {}", result);
 
         return ok(result);
+    }
+
+    public void check(String authorization, int id) throws JsonProcessingException {
+        String[] chunks = authorization.split("\\.");
+        Base64.Decoder decoder = Base64.getUrlDecoder();
+
+        String payload = new String(decoder.decode(chunks[1]));
+        HashMap mapping = new ObjectMapper().readValue(payload, HashMap.class);
+        final String username = (String) mapping.get("sub");
+        final String authority = (String) ((List) mapping.get("authorities")).get(0);
+        if (authority.equals("ROLE_CLIENT")) {
+            Optional<User> userOptional = userRepository.findByUsername(username);
+            User user = userOptional.orElseThrow(() -> new EntityNotFoundException(String.format(USER_NOT_FOUND, username)));
+
+            if (user.getId() != id) {
+                throw new ForbiddenAccess("Forbidden access");
+            }
+        }
     }
 
     @PutMapping(USER_BY_ID)

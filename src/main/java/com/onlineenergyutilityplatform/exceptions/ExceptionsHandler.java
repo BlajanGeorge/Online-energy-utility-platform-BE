@@ -54,4 +54,11 @@ public class ExceptionsHandler extends ResponseEntityExceptionHandler {
                         ex.getClass().getCanonicalName())), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(ForbiddenAccess.class)
+    public ResponseEntity<ErrorResponse> handleForbidden(final ForbiddenAccess ex) {
+        return new ResponseEntity<>(new ErrorResponse(
+                new ErrorInformation(
+                        ex.getMessage(),
+                        ex.getClass().getCanonicalName())), HttpStatus.FORBIDDEN);
+    }
 }

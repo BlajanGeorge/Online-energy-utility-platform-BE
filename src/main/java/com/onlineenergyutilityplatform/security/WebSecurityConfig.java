@@ -9,11 +9,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static com.onlineenergyutilityplatform.utilities.Constants.*;
+
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
     private static final String ADMINISTRATOR = "ADMINISTRATOR";
     private static final String CLIENT = "CLIENT";
+    private static final String WILD_CARD = "/**";
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -28,9 +31,10 @@ public class WebSecurityConfig {
                 .csrf().disable()
                 .addFilterAfter(new JWTAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
-                .antMatchers(HttpMethod.GET, "/users/{id}").hasAnyRole(CLIENT, ADMINISTRATOR)
-                .antMatchers("/users/**").hasRole(ADMINISTRATOR)
-                .antMatchers("/devices/**").hasRole(ADMINISTRATOR)
+                .antMatchers(HttpMethod.GET, USER_BY_ID).hasAnyRole(CLIENT, ADMINISTRATOR)
+                .antMatchers(HttpMethod.POST, USERS_CREATE_CLIENT).permitAll()
+                .antMatchers(USERS + WILD_CARD).hasRole(ADMINISTRATOR)
+                .antMatchers(DEVICES + WILD_CARD).hasRole(ADMINISTRATOR)
                 .antMatchers("/login").permitAll()
                 .anyRequest().authenticated();
 
