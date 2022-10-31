@@ -114,4 +114,19 @@ public class DeviceServiceImplementation implements DeviceService {
 
         return mapFromEntityToDto(device);
     }
+
+    @Override
+    @Transactional
+    public List<GetDeviceDto> getUnassignedDevices() {
+        final List<Device> devices;
+        devices = deviceRepository.findAllUnassigned();
+
+        final List<GetDeviceDto> data = devices.stream()
+                .map(Mapper::mapFromEntityToDto)
+                .collect(Collectors.toList());
+
+        log.info("Obtained device list, there are {} devices.", data.size());
+
+        return data;
+    }
 }

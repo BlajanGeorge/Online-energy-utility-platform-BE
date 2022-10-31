@@ -57,7 +57,7 @@ public class UserController {
     }
 
     @GetMapping(USER_BY_ID)
-    public ResponseEntity<GetUserDto> getUserById(@Min(1) @PathVariable("id") int id,
+    public ResponseEntity<GetUserDto> getUserById(@Min(1) @PathVariable(ID_PARAM) int id,
                                                   @RequestHeader("authorization") String authorization) throws JsonProcessingException {
         check(authorization, id);
         log.info("Get user by id request received for id {}", id);
@@ -87,7 +87,7 @@ public class UserController {
     }
 
     @PutMapping(USER_BY_ID)
-    public ResponseEntity<GetUserDto> updateUserById(@Min(1) @PathVariable("id") int id,
+    public ResponseEntity<GetUserDto> updateUserById(@Min(1) @PathVariable(ID_PARAM) int id,
                                                      @Valid @RequestBody UpdateUserDto updateUserDto) {
         log.info("Update user by id request received for id {}", id);
 
@@ -98,7 +98,7 @@ public class UserController {
     }
 
     @DeleteMapping(USER_BY_ID)
-    public ResponseEntity<Void> deleteUserById(@Min(1) @PathVariable("id") int id) {
+    public ResponseEntity<Void> deleteUserById(@Min(1) @PathVariable(ID_PARAM) int id) {
         log.info("Delete user by id request received for id {}", id);
 
         userService.deleteUserById(id);
@@ -136,11 +136,33 @@ public class UserController {
     }
 
     @PutMapping(DEVICE_TO_USER)
-    public ResponseEntity<Void> assignDeviceToUser(@Min(1) @PathVariable("id") int id,
-                                                   @Min(1) @PathVariable("deviceId") int deviceId) {
+    public ResponseEntity<Void> assignDeviceToUser(@Min(1) @PathVariable(ID_PARAM) int id,
+                                                   @Min(1) @PathVariable(DEVICE_ID_PARAM) int deviceId) {
         log.info("Assign device on user request received for user id {} and device id {}.", id, deviceId);
 
         userService.assignDeviceToUser(id, deviceId);
+
+        return ok().build();
+    }
+
+    @PutMapping(UNNASIGNED_DEVICE_TO_USER)
+    public ResponseEntity<Void> assignUnassginedDeviceToUser(@Min(1) @PathVariable(ID_PARAM) int id,
+                                                             @RequestBody List<String> devices) {
+        log.info("Assign unassgined device on user request received for user id {}.", id);
+
+        userService.assignUnassginedDeviceToUser(id, devices);
+
+        return ok().build();
+    }
+
+    @DeleteMapping(DEVICE_TO_USER)
+    public ResponseEntity<Void> unassginDeviceFromUser(@Min(1) @PathVariable(ID_PARAM) int id,
+                                                       @Min(1) @PathVariable(DEVICE_ID_PARAM) int deviceId,
+                                                       @RequestHeader("authorization") String authorization) throws JsonProcessingException {
+        check(authorization, id);
+        log.info("Unassign device from user request received for user id {} and device id {}.", id, deviceId);
+
+        userService.unassignDeviceFromUser(id, deviceId);
 
         return ok().build();
     }

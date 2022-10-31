@@ -4,6 +4,8 @@ import com.onlineenergyutilityplatform.db.model.Role;
 import com.onlineenergyutilityplatform.dto.*;
 import org.springframework.data.domain.PageRequest;
 
+import java.util.List;
+
 /**
  * Device Service class to handle device operations
  */
@@ -48,4 +50,6 @@ public interface DeviceService {
     void deleteDeviceById(int deviceId);
 
     GetDeviceDto addEnergyConsumptionReport(EnergyConsumptionDto energyConsumptionDto, int deviceId);
+
+    List<GetDeviceDto> getUnassignedDevices();
 }

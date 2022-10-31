@@ -4,6 +4,8 @@ import com.onlineenergyutilityplatform.db.model.Role;
 import com.onlineenergyutilityplatform.dto.*;
 import org.springframework.data.domain.PageRequest;
 
+import java.util.List;
+
 /**
  * User Service class to handle user operations
  */
@@ -11,6 +13,7 @@ public interface UserService {
 
     /**
      * Return a paginated request of users
+     *
      * @return {@link PagedResult}
      */
     PagedResult<GetUserDto> getUsers(PageRequest pageRequest);
@@ -48,10 +51,21 @@ public interface UserService {
 
     /**
      * Assign device to user
-     * @param userId user identifier
+     *
+     * @param userId   user identifier
      * @param deviceId device identifier
      */
     void assignDeviceToUser(int userId, int deviceId);
 
+    /**
+     * Unassign device from user
+     *
+     * @param userId   user identifier
+     * @param deviceId device identifier
+     */
+    void unassignDeviceFromUser(int userId, int deviceId);
+
     UserLoginResponse login(UserLoginRequest userLoginRequest);
+
+    void assignUnassginedDeviceToUser(int userId, List<String> devices);
 }

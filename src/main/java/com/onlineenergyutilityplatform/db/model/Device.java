@@ -25,7 +25,7 @@ public class Device {
     @Column(name = "address", nullable = false)
     private String address;
     //expressed in kWh
-    @Column(name = "max_hourly_energy_consumption")
+        @Column(name = "max_hourly_energy_consumption")
     private Float maxHourlyEnergyConsumption;
     @ManyToOne
     @JoinColumn(name = "user_id")

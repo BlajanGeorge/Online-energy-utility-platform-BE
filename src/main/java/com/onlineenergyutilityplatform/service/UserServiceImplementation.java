@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -155,6 +156,24 @@ public class UserServiceImplementation implements UserService {
         deviceRepository.save(device);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
+    public void unassignDeviceFromUser(int userId, int deviceId) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        User user = userOptional.orElseThrow(() -> new EntityNotFoundException(String.format(USER_NOT_FOUND, userId)));
+        Optional<Device> deviceOptional = deviceRepository.findById(deviceId);
+        Device device = deviceOptional.orElseThrow(() -> new EntityNotFoundException(String.format(DEVICE_WITH_ID_NOT_FOUND, deviceId)));
+
+        if (device.getUser() != null && Objects.equals(device.getUser().getId(), user.getId())) {
+            device.setUser(null);
+        }
+
+        deviceRepository.save(device);
+    }
+
     @Override
     public UserLoginResponse login(UserLoginRequest userLoginRequest) {
         Optional<User> userOptional = this.userRepository.findByUsername(userLoginRequest.getUsername());
@@ -168,5 +187,20 @@ public class UserServiceImplementation implements UserService {
         } else {
             throw new BadCredentialsException("Incorrect email/password!");
         }
+    }
+
+    @Override
+    @Transactional
+    public void assignUnassginedDeviceToUser(int userId, List<String> devices) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        User user = userOptional.orElseThrow(() -> new EntityNotFoundException(String.format(USER_NOT_FOUND, userId)));
+        devices.forEach(deviceId -> {
+                        Optional<Device> device = deviceRepository.findById(Integer.parseInt(deviceId));
+                    if (device.isPresent() && device.get().getUser() == null) {
+                        device.get().setUser(user);
+                        deviceRepository.save(device.get());
+                    }
+                }
+        );
     }
 }
