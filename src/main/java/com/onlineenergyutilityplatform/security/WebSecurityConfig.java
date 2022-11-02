@@ -34,6 +34,7 @@ public class WebSecurityConfig {
                 .antMatchers(HttpMethod.GET, USER_BY_ID).hasAnyRole(CLIENT, ADMINISTRATOR)
                 .antMatchers(HttpMethod.DELETE, DEVICE_TO_USER).hasAnyRole(CLIENT, ADMINISTRATOR)
                 .antMatchers(HttpMethod.PUT, UNNASIGNED_DEVICE_TO_USER).hasAnyRole(CLIENT, ADMINISTRATOR)
+                .antMatchers(ENERGY_REPORTS_FOR_DEVICE).hasAnyRole(CLIENT, ADMINISTRATOR)
                 .antMatchers(HttpMethod.POST, USERS_CREATE_CLIENT).permitAll()
                 .antMatchers(USERS + WILD_CARD).hasRole(ADMINISTRATOR)
                 .antMatchers(DEVICES + WILD_CARD).hasRole(ADMINISTRATOR)

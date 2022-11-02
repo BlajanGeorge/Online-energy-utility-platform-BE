@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 
 /**
  * Class to define Energy db entity
@@ -24,12 +23,12 @@ public class EnergyConsumption {
     @Column(name = "energy")
     private Float energy;
     @Column(name = "time")
-    private Timestamp time;
+    private Long time;
     @ManyToOne
     @JoinColumn(name = "device_id")
     private Device device;
 
-    public EnergyConsumption(Float energy, Timestamp time) {
+    public EnergyConsumption(Float energy, Long time) {
         this.energy = energy;
         this.time = time;
     }

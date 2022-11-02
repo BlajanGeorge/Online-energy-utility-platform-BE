@@ -4,7 +4,6 @@ import lombok.*;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.sql.Timestamp;
 
 /**
  * Energy consumption dto
@@ -19,5 +18,5 @@ public class EnergyConsumptionDto {
     @Min(0)
     private Float energy;
     @NotNull
-    private Timestamp time;
+    private Long time;
 }

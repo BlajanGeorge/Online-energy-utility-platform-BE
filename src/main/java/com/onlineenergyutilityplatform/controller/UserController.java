@@ -44,7 +44,7 @@ public class UserController {
 
     @GetMapping(USERS)
     public ResponseEntity<PagedResult<GetUserDto>> getUsers(final @RequestParam(name = PAGE_INDEX_QUERY_PARAM_NAME, required = false, defaultValue = "0") int pageIndex,
-                                                            final @RequestParam(name = PAGE_SIZE_QUERY_PARAM_NAME, required = false, defaultValue = "20") int pageSize) {
+                                                            final @RequestParam(name = PAGE_SIZE_QUERY_PARAM_NAME, required = false, defaultValue = "1000") int pageSize) {
         log.info("Get users request received with page index {}, page size {}.", pageIndex, pageSize);
         final PageRequest pageRequest = PageRequest.of(pageIndex, pageSize);
 

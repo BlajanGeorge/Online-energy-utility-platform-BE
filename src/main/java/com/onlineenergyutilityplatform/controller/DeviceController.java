@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 import static com.onlineenergyutilityplatform.utilities.Constants.*;
@@ -40,7 +41,7 @@ public class DeviceController {
 
     @GetMapping(DEVICES)
     public ResponseEntity<PagedResult<GetDeviceDto>> getDevices(final @RequestParam(name = PAGE_INDEX_QUERY_PARAM_NAME, required = false, defaultValue = "0") int pageIndex,
-                                                                final @RequestParam(name = PAGE_SIZE_QUERY_PARAM_NAME, required = false, defaultValue = "20") int pageSize) {
+                                                                final @RequestParam(name = PAGE_SIZE_QUERY_PARAM_NAME, required = false, defaultValue = "1000") int pageSize) {
         log.info("Get devices request received with page index {}, page size {}.", pageIndex, pageSize);
         final PageRequest pageRequest = PageRequest.of(pageIndex, pageSize);
 
@@ -53,7 +54,7 @@ public class DeviceController {
     }
 
     @GetMapping(DEVICE_BY_ID)
-    public ResponseEntity<GetDeviceDto> getDeviceById(@Min(1) @PathVariable(ID_PARAM) int id) {
+    public ResponseEntity<GetDeviceDto> getDeviceById(@Min(1) @PathVariable(DEVICE_ID_PARAM) int id) {
         log.info("Get device by id request received for id {}", id);
 
         GetDeviceDto result = deviceService.getDeviceById(id);
@@ -63,7 +64,7 @@ public class DeviceController {
     }
 
     @PutMapping(DEVICE_BY_ID)
-    public ResponseEntity<GetDeviceDto> updateDeviceById(@Min(1) @PathVariable(ID_PARAM) int id,
+    public ResponseEntity<GetDeviceDto> updateDeviceById(@Min(1) @PathVariable(DEVICE_ID_PARAM) int id,
                                                          @Valid @RequestBody DeviceDto deviceDto) {
         log.info("Update device by id request received for id {}", id);
 
@@ -74,7 +75,7 @@ public class DeviceController {
     }
 
     @DeleteMapping(DEVICE_BY_ID)
-    public ResponseEntity<Void> deleteDeviceById(@Min(1) @PathVariable(ID_PARAM) int id) {
+    public ResponseEntity<Void> deleteDeviceById(@Min(1) @PathVariable(DEVICE_ID_PARAM) int id) {
         log.info("Delete device by id request received for id {}", id);
 
         deviceService.deleteDeviceById(id);
@@ -93,7 +94,7 @@ public class DeviceController {
     }
 
     @PostMapping(DEVICE_BY_ID)
-    public ResponseEntity<GetDeviceDto> addEnergyConsumptionReport(@Min(1) @PathVariable(ID_PARAM) int id,
+    public ResponseEntity<GetDeviceDto> addEnergyConsumptionReport(@Min(1) @PathVariable(DEVICE_ID_PARAM) int id,
                                                                    @Valid @RequestBody EnergyConsumptionDto energyConsumptionDto) {
         log.info("Add energy consumption report request received with load {} for device with id {}", energyConsumptionDto, id);
 
@@ -108,5 +109,16 @@ public class DeviceController {
         log.info("Get unassigned devices request received.");
 
         return new ResponseEntity<>(deviceService.getUnassignedDevices(), HttpStatus.OK);
+    }
+
+    @GetMapping(ENERGY_REPORTS_FOR_DEVICE)
+    public ResponseEntity<List<EnergyConsumptionDto>> getReportsForDevice(@Min(1) @PathVariable(DEVICE_ID_PARAM) int id,
+                                                                          @RequestHeader("initialDate") Long initialDate,
+                                                                          @RequestHeader("endDate") Long endDate) {
+        log.info("Get reports for device with id {} request received.", id);
+
+        List<EnergyConsumptionDto> result = deviceService.getReportsForDeviceInInterval(id, initialDate, endDate);
+
+        return ok(result);
     }
 }

@@ -129,4 +129,11 @@ public class DeviceServiceImplementation implements DeviceService {
 
         return data;
     }
+
+    @Override
+    public List<EnergyConsumptionDto> getReportsForDeviceInInterval(int id, Long initialDate, Long endDate) {
+        List<EnergyConsumption> result = energyConsumptionRepository.getReportsForDeviceInInterval(id, initialDate, endDate);
+
+        return result.stream().map(Mapper::mapFromEntityToDto).collect(Collectors.toList());
+    }
 }

@@ -1,6 +1,5 @@
 package com.onlineenergyutilityplatform.service;
 
-import com.onlineenergyutilityplatform.db.model.Role;
 import com.onlineenergyutilityplatform.dto.*;
 import org.springframework.data.domain.PageRequest;
 
@@ -52,4 +51,6 @@ public interface DeviceService {
     GetDeviceDto addEnergyConsumptionReport(EnergyConsumptionDto energyConsumptionDto, int deviceId);
 
     List<GetDeviceDto> getUnassignedDevices();
+
+    List<EnergyConsumptionDto> getReportsForDeviceInInterval(int id, Long initialDate, Long endDate);
 }
