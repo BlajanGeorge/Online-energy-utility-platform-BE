@@ -8,6 +8,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+
+import java.util.List;
 
 import static com.onlineenergyutilityplatform.utilities.Constants.*;
 
@@ -31,6 +34,7 @@ public class WebSecurityConfig {
                 .csrf().disable()
                 .addFilterAfter(new JWTAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
+                .antMatchers(HttpMethod.PUT, DEVICE_BY_ID).hasRole(ADMINISTRATOR)
                 .antMatchers(HttpMethod.GET, USER_BY_ID).hasAnyRole(CLIENT, ADMINISTRATOR)
                 .antMatchers(HttpMethod.DELETE, DEVICE_TO_USER).hasAnyRole(CLIENT, ADMINISTRATOR)
                 .antMatchers(HttpMethod.PUT, UNNASIGNED_DEVICE_TO_USER).hasAnyRole(CLIENT, ADMINISTRATOR)

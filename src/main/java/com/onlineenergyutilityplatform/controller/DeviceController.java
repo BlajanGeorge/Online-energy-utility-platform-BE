@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 import static com.onlineenergyutilityplatform.utilities.Constants.*;
