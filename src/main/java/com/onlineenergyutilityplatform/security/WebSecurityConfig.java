@@ -34,6 +34,7 @@ public class WebSecurityConfig {
                 .csrf().disable()
                 .addFilterAfter(new JWTAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
+                .antMatchers("/ws/**").permitAll()
                 .antMatchers(HttpMethod.PUT, DEVICE_BY_ID).hasRole(ADMINISTRATOR)
                 .antMatchers(HttpMethod.GET, USER_BY_ID).hasAnyRole(CLIENT, ADMINISTRATOR)
                 .antMatchers(HttpMethod.DELETE, DEVICE_TO_USER).hasAnyRole(CLIENT, ADMINISTRATOR)
