@@ -91,6 +91,6 @@ public class Mapper {
     }
 
     public static UserLoginResponse mapFromModelToUserLoginResponse(User user, String token) {
-        return new UserLoginResponse(user.getId(), token, user.getRole().name().equals("ADMINISTRATOR"));
+        return new UserLoginResponse(user.getId(), token, user.getRole().name().equals("ADMINISTRATOR"), user.getUsername());
     }
 }

@@ -13,4 +13,5 @@ public class UserLoginResponse {
     private int id;
     private String token;
     private boolean isAdmin;
+    private String username;
 }
